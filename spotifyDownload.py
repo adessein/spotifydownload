@@ -23,7 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ** Credits **
 
 All the SpotifyAPI class and large part of the main code is from
-Casey Chu and Erik Westrup. Their work is available on 
+Casey Chu and Erik Westrup. Their work is available on
 https://github.com/caseychu/spotify-backup/blob/master/spotify-backup.py
 
 
@@ -56,7 +56,7 @@ ydl_opts = {
 }
 
 baseFolder = "/media/nonolili/Data/Music/Spotify"
-playlistsToDownload = ['Disco funk']
+playlistsToDownload = ['tbd']
 
 class SpotifyAPI:
 
@@ -174,12 +174,12 @@ if __name__ == '__main__':
 
     # Get the ID of the logged in user.
     me = spotify.get('me')
-    log('Logged in as {display_name} ({id})'.format(**me))
+    print('Logged in as {display_name} ({id})'.format(**me))
 
     # List all playlists and all track in each playlist.
     playlists = spotify.list('users/{user_id}/playlists'.format(user_id=me['id']), {'limit': 50})
     for playlist in playlists:
-        log('Loading playlist: {name} ({tracks[total]} songs)'.format(**playlist))
+        print('Loading playlist: {name} ({tracks[total]} songs)'.format(**playlist))
         playlist['tracks'] = spotify.list(playlist['tracks']['href'], {'limit': 100})
 
     # donwload videos and extract audio
@@ -190,14 +190,17 @@ if __name__ == '__main__':
                 os.makedirs(playlist['name'])
             os.chdir(playlist['name'])
             for track in playlist['tracks']:
-                artists = ', '.join([artist['name'] for artist in track['track']['artists']])
-                trackName = track['track']['name']
-                query = quote(' '.join([artists, trackName]))
-                url = "https://www.youtube.com/results?search_query=" + query
-                response = urlopen(url)
-                html = response.read()
-                soup = BeautifulSoup(html, "lxml")
-                vids = soup.findAll(attrs={'class':'yt-uix-tile-link'})
-                ydl_opts["outtmpl"]= "{:s} - {:s}.%(ext)s".format(artists, trackName)
-                with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                    ydl.download(['https://www.youtube.com' + vids[0]['href']])
+                try:
+                    artists = ', '.join([artist['name'] for artist in track['track']['artists']])
+                    trackName = track['track']['name']
+                    query = quote(' '.join([artists, trackName]))
+                    url = "https://www.youtube.com/results?search_query=" + query
+                    response = urlopen(url)
+                    html = response.read()
+                    soup = BeautifulSoup(html, "lxml")
+                    vids = soup.findAll(attrs={'class':'yt-uix-tile-link'})
+                    ydl_opts["outtmpl"]= "{:s} - {:s}.%(ext)s".format(artists, trackName)
+                    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                        ydl.download(['https://www.youtube.com' + vids[0]['href']])
+                except:
+                    print("Error while downloading {}-{}".format(artists, trackName))

@@ -3,7 +3,7 @@
 """
 spotifyDownload
 Arnaud DESSEIN
-https://bitbucket.org/adessein/spotifydownload
+https://github.com/adessein/spotifydownload/
 
 ** Licence : GPL v3 **
 
@@ -55,7 +55,7 @@ ydl_opts = {
     }],
 }
 
-baseFolder = "/media/nonolili/Data/Music/Spotify"
+baseFolder = "~/Music/Spotify"
 playlistsToDownload = ['tbd']
 
 class SpotifyAPI:
